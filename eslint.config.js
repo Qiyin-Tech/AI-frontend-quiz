@@ -57,7 +57,11 @@ export default antfu(
     },
   },
   {
-    files: ['index.html', 'README.md'],
+    files: [
+      'index.html',
+      'README.md',
+      'README.upstream.md',
+    ],
     rules: {
       'format/prettier': 'off',
     },
