@@ -1,218 +1,120 @@
-# Chatbot Flow Builder Starter Kit
+# 前端开发作业：文案生成节点
 
-![Chatbot Flow Builder](./screenshot.jpeg)
+在本仓库已有的流程编辑器中增加一个“文案生成”节点：用户在画布中输入创作想法，调用接口生成文案，再编辑和使用结果。这个场景来自我们面向音乐、视频及其他内容创作的 AI 产品。
 
-A modern, extensible starter kit for building chatbot flow editors using React, React Flow, Zustand, and TypeScript.
+**建议用时 2–4 小时，最多投入 4 小时。** 到时请提交已有成果，并说明未完成项和下一步。
 
-## Table of Contents
+鼓励使用 AI 编码工具、搜索和文档。我们主要考察你理解现有工程、快速学习新 API、处理交互与异步状态、验证交付的能力；你需要能解释和修改自己提交的关键代码。不要求事先熟悉 React Flow，但快速查阅并使用其 API 是本题的一部分。
 
-- [Live Demo](#live-demo)
-- [Features](#features)
-  - [Nodes](#nodes)
-  - [Sidebars](#sidebars)
-  - [Flow](#flow)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Extending the Starter Kit](#extending-the-starter-kit)
-  - [Add a New Node Type](#add-a-new-node-type)
-  - [Add-or-Register-Property-Panels](#add-or-register-property-panels)
-  - [Customize Flow Logic](#customize-flow-logic)
-  - [Add Sidebar Panels or Features](#add-sidebar-panels-or-features)
-  - [General Tips](#general-tips)
-- [Contributing](#contributing)
-- [Author](#author)
+## 启动项目
 
-## Live Demo
+技术栈：React、TypeScript、React Flow、Zustand、Vite。已有节点列表、画布、属性面板和连线功能。
 
-[See the live demo](https://chatbot-flow-builder-task-bitespeed.vercel.app/)
+使用 Node.js ≥ 22.18，推荐 Node.js 24，以及 pnpm：
 
-## Features
-
-### Nodes
-
-- **Start Node**: Entry point of the flow.
-- **Message Node**: Displays a message to the user.
-- **Conditional Path Node**: Branches the flow based on conditions (showcases dynamic handles).
-- **End Node**: Terminates the flow.
-
-### Sidebars
-
-- **Node Sidebar**: List of available nodes to add.
-- **Node Properties Sidebar**: Edit properties of the selected node.
-
-### Flow
-
-- **Validation**: Ensures the flow has a start and end node.
-- **Auto Adjust**: Automatically arranges nodes to avoid overlap (does not adjust edges).
-
-## Tech Stack
-
-- React
-- React Flow
-- Zustand
-- TypeScript
-- UnoCSS
-
-## Getting Started
-
-1. **Install dependencies:**
-   ```sh
-   pnpm install
-   ```
-2. **Start the development server:**
-   ```sh
-   pnpm dev
-   ```
-3. **Open** [http://localhost:5173](http://localhost:5173) in your browser.
-
-## Extending the Starter Kit
-
-This starter kit is designed to be easily extensible. Here are some common ways to extend the codebase:
-
-### Add a New Node Type
-
-Here's how you can add a new node, using the Start Node as a reference:
-
-1. **Define the node type:**
-   - Add a new entry in `src/modules/nodes/types.ts`:
-     ```typescript
-     export enum BuilderNode {
-       START = 'start',
-       // ...other nodes...
-       CUSTOM = 'custom',
-     }
-     ```
-2. **Create the node component and metadata:**
-   - Create a new folder for your node in `src/modules/nodes/nodes/`, e.g. `custom-node/`.
-   - Add your component as `custom.node.tsx` inside that folder. For example:
-     ```tsx
-     // src/modules/nodes/nodes/custom-node/custom.node.tsx
-     import type { Node, NodeProps } from '@xyflow/react'
-     import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
-     import { Position } from '@xyflow/react'
-     import { nanoid } from 'nanoid'
-     import { memo, useMemo, useState } from 'react'
-     import { cn } from '~@/utils/cn'
-     import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
-     import { BuilderNode } from '~/modules/nodes/types'
-     import { getNodeDetail } from '~/modules/nodes/utils'
-
-     export interface CustomNodeData extends BaseNodeData {
-       label?: string;
-     }
-
-     const NODE_TYPE = BuilderNode.CUSTOM
-
-     type CustomNodeProps = NodeProps<Node<CustomNodeData, typeof NODE_TYPE>>
-
-     export function CustomNode({ data, selected, isConnectable }: CustomNodeProps) {
-       const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
-       const [sourceHandleId] = useState<string>(nanoid())
-       return (
-         <>
-           <div
-             data-selected={selected}
-             className="flex items-center border border-dark-100 rounded-full bg-dark-300 px-4 py-2 shadow-sm transition data-[selected=true]:(border-teal-600 ring-1 ring-teal-600/50)"
-           >
-             <div className={cn(meta.icon, 'size-4.5 shrink-0 mr-2 scale-130')} />
-             <span className="mr-1">
-               {data.label || meta.title}
-             </span>
-           </div>
-           <CustomHandle
-             type="source"
-             id={sourceHandleId}
-             position={Position.Right}
-             isConnectable={isConnectable}
-           />
-         </>
-       )
-     }
-
-     // eslint-disable-next-line react-refresh/only-export-components
-     export const metadata: RegisterNodeMetadata<CustomNodeData> = {
-       type: NODE_TYPE,
-       node: memo(CustomNode),
-       detail: {
-         icon: 'i-custom:icon',
-         title: 'Custom',
-         description: 'A custom node example',
-       },
-       connection: {
-         inputs: 0,
-         outputs: 1,
-       },
-       available: true,
-       defaultData: {
-         label: 'Custom',
-         deletable: true,
-       },
-     }
-     ```
-
-**Folder Structure Example:**
-
-```
-src/modules/nodes/nodes/
-  start-node/
-    start.node.tsx
-  text-message-node/
-    text-message.node.tsx
-  conditional-path-node/
-    conditional-path.node.tsx
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-### Add or Register Property Panels
+打开终端显示的地址，通常为 `http://localhost:5173`。mock 接口随 Vite 启动，无需后端、API Key 或外部模型服务。
 
-To add a custom property panel for your node:
+若 pnpm 提示 `ERR_PNPM_IGNORED_BUILDS`，按提示运行 `pnpm approve-builds`，审查上游依赖 `esbuild` 和 `@parcel/watcher` 的构建脚本后重新安装。其他环境问题请记录命令和报错并及时反馈。
 
-1. **Create the property panel component:**
-   - Add a new component in `src/modules/sidebar/panels/node-properties/property-panels/`, e.g. `custom-node-property-panel.tsx`.
-   - The component should accept `id`, `type`, `data`, and `updateData` props. See `text-message-property-panel.tsx` for a reference implementation.
+## 任务要求
 
-2. **Link the property panel to your node:**
-   - In your node's metadata (e.g., in `custom.node.tsx`), set the `propertyPanel` field to your panel component:
-     ```tsx
-     import CustomNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/custom-node-property-panel'
-     // ...
-     export const metadata = {
-       // ...existing metadata fields...
-       propertyPanel: CustomNodePropertyPanel,
-     }
-     ```
+### 节点与编辑
 
-3. **Registration is automatic:**
-   - The codebase auto-registers property panels by mapping the `propertyPanel` field from each node's metadata into `NODE_PROPERTY_PANEL_COMPONENTS`.
-   - When a node is selected, the sidebar will automatically render the correct property panel if it is linked in the node's metadata.
+- 在现有节点列表中增加“文案生成”节点，可添加到画布，具有一个输入连接点和一个输出连接点。
+- 沿用现有交互打开属性面板，编辑创作描述 `prompt`。去除首尾空白后长度为 1–2000，按 JavaScript 字符串 `length` 计算；不合法时给出提示。
+- 点击“生成”调用 mock 接口。节点卡片和属性面板都应清楚表达未生成、生成中、成功、失败状态。
+- 成功后，节点展示文案或摘要；属性面板支持编辑完整文案，修改同步到节点展示。
 
-**Reference:**
+### 异步状态与异常
 
-- See `src/modules/sidebar/panels/node-properties/constants/property-panels.ts` for how property panels are mapped.
-- See `src/modules/nodes/nodes/text-message-node/text-message.node.tsx` for an example of linking a property panel to a node.
+- 生成中禁止同一节点重复提交，输入和已有文案暂时只读；其他节点仍可操作和生成。
+- 失败时显示可理解的错误，保留输入，允许修改输入或重试。需处理接口错误和网络异常。
+- 再次生成时保留旧文案，成功后替换，失败不清空。
+- 各节点的输入、结果、错误和运行状态独立。生成中切换节点或关闭属性面板，不影响请求及其结果归属。
+- 生成中删除节点，迟到的响应不能导致页面报错、节点重新出现或修改其他节点；可以取消请求或安全忽略结果。
+- 保留原有节点的编辑、拖动、连线和删除行为。
 
-### Customize Flow Logic
+### 范围
 
-- Modify hooks in `src/modules/flow-builder/hooks/` to change validation, auto-adjust, or connection logic.
-- Update UI components in `src/modules/flow-builder/components/` to change controls, menus, or edge behavior.
+在现有工程中增量开发，优先复用组件、节点注册和数据管理方式；不要另建应用、替换技术栈或交付独立 HTML 页面。实现结构由你决定，新增 UI 保持清晰可用即可。
 
-### Add Sidebar Panels or Features
+只要求单节点独立生成，连线不传递数据、不触发整图执行。无需真实模型、流式输出、取消按钮、任务队列、持久化或刷新恢复、登录、部署、移动端专项适配。无需全面修复上游问题；影响任务的必要修复请说明原因。
 
-- Add new panels in `src/modules/sidebar/panels/` and register them in the sidebar.
+## Mock 接口
 
-### General Tips
+`POST /api/generate`，同源请求，`Content-Type: application/json`，请求体最多 16 KiB。
 
-- The codebase is modular and uses TypeScript for type safety.
-- Use the existing node and sidebar implementations as references for your extensions.
+请求：
 
----
+```json
+{ "prompt": "为一段雨夜钢琴音乐写一段介绍" }
+```
 
-## Contributing
+成功响应（HTTP 200，示例）：
 
-Contributions are welcome! Please open issues or submit pull requests for improvements and new features.
+```json
+{ "text": "创作主题：为一段雨夜钢琴音乐写一段介绍\n\n……" }
+```
 
-# Author
+失败响应（以 HTTP 503 为例）：
 
-**Denish Sharma**
-- Email: denishcommon@gmail.com
-- LinkedIn: [denish-sharma](https://www.linkedin.com/in/denishsharma/)
-- GitHub: [denish-sharma](https://github.com/denishsharma)
+```json
+{ "error": { "code": "GENERATION_FAILED", "message": "模拟生成失败，请重试或修改输入。" } }
+```
+
+| HTTP | code | 含义 |
+| --- | --- | --- |
+| 400 | INVALID_JSON | 非法 JSON |
+| 400 | INVALID_PROMPT | prompt 类型、空值或长度不合法 |
+| 405 | METHOD_NOT_ALLOWED | 非 POST 请求 |
+| 413 | PAYLOAD_TOO_LARGE | 请求体超过 16 KiB |
+| 415 | UNSUPPORTED_MEDIA_TYPE | 非 application/json |
+| 503 | GENERATION_FAILED | 模拟生成失败 |
+| 500 | INTERNAL_ERROR | mock 内部错误 |
+
+接口不保存状态、不接收节点 ID，前端负责将结果应用到发起请求的节点。相同输入返回相同模板文案。
+
+用以下输入验证不同场景；前缀匹配去除首尾空白后的 prompt，区分大小写，不组合使用：
+
+| 输入 | 行为 |
+| --- | --- |
+| `雨夜钢琴` | 约 800 ms 后成功 |
+| `[slow] 雨夜钢琴` | 约 4 秒后成功，结果不包含 `[slow]` 前缀 |
+| `[error] 雨夜钢琴` | 约 800 ms 后返回 503，每次都失败；移除前缀可验证恢复成功 |
+
+无需开发测试模式选择器。可以阅读 `mock/generation.ts` 及其测试，不要通过修改接口规则绕过异常场景。接口支持 `pnpm dev` 和本地 `pnpm preview`，不包含在 `dist` 静态产物中。
+
+## 验证与提交
+
+运行以下检查，并对照任务要求验证前端功能，尤其是多节点并发、切换或关闭面板、删除运行中节点，以及原有功能是否回归：
+
+```sh
+pnpm test:mock
+pnpm type-check
+pnpm build
+pnpm lint
+```
+
+`test:mock` 只验证接口。前端改动请提供相关自动化测试，或可重复的手工验证步骤及实际结果。
+
+**必须保留完整 Git 提交历史供 review，包括题目基线和本次开发的全部提交。** 随开发过程提交，说明每次改动的目的；不要在交付前 squash、删除中间提交或重新初始化仓库。我们会结合历史了解实现、验证和修正过程，不以提交数量评分。
+
+按招聘方指定渠道交付可访问的 Git 仓库或包含完整历史的 `git bundle`，不要仅提交最终代码压缩包或单份 diff。无需公开部署或向上游提交 PR；勿提交依赖目录、构建产物、密钥或保密内容。
+
+附一份简短的 `SUBMISSION.md`：
+
+- 实际用时、完成范围和运行方式。
+- 关键改动、实现取舍及原因。
+- 验证步骤与结果、已知问题和未完成项。
+- AI 工具的使用方式，以及你如何检查或修正其产出，无需完整聊天记录。
+
+后续 review 将围绕你的代码、提交历史和验证过程展开。
+
+## 项目来源
+
+上游：[denishsharma/chatbot-flow-builder-starter-kit](https://github.com/denishsharma/chatbot-flow-builder-starter-kit)，基线提交 `8dfa771b29485b6052acf7c366c4bc42304d7da5`。保留原项目 [MIT 许可证](./LICENSE) 和 [上游 README](./README.upstream.md)。

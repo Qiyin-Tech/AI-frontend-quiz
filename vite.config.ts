@@ -6,6 +6,7 @@ import unocss from 'unocss/vite'
 import autoImport from 'unplugin-auto-import/vite'
 
 import { defineConfig } from 'vite'
+import { generationMock } from './mock/generation'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,6 +17,7 @@ export default defineConfig({
     ],
   },
   plugins: [
+    generationMock(),
     unocss(),
     tanStackRouter({
       quoteStyle: 'double',
